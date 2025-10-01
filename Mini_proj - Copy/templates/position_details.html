@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-10 mx-auto">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>{{ position.title }}</h2>
+            <a href="{{ url_for('student_dashboard') if current_user.user_type == 'student' else url_for('company_dashboard') }}" 
+               class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <!-- Position Information -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h4 class="mb-0">Position Details</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <h6><strong>Company:</strong> {{ company.name }}</h6>
+                                <h6><strong>Domain:</strong> {{ position.domain or 'Not specified' }}</h6>
+                            </div>
+                            <div class="col-md-6">
+                                <h6><strong>Minimum CGPA:</strong> {{ position.min_cgpa or 'Not specified' }}</h6>
+                            </div>
+                        </div>
+                        
+                        {% if position.description %}
+                        <div class="mb-3">
+                            <h6><strong>Description:</strong></h6>
+                            <p>{{ position.description }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Required Skills Section -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h4 class="mb-0">Required Skills</h4>
+                    </div>
+                    <div class="card-body">
+                        {% if required_skills %}
+                            <div class="row">
+                                {% for skill in required_skills %}
+                                <div class="col-md-4 mb-2">
+                                    <span class="badge bg-primary fs-6 p-2">{{ skill }}</span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="text-muted">No specific skills required.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Required Courses Section -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h4 class="mb-0">Required Courses</h4>
+                    </div>
+                    <div class="card-body">
+                        {% if required_courses %}
+                            <div class="row">
+                                {% for course in required_courses %}
+                                <div class="col-md-6 mb-2">
+                                    <span class="badge bg-secondary fs-6 p-2">{{ course }}</span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="text-muted">No specific courses required.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <!-- Student Match Information -->
+                {% if current_user.user_type == 'student' and match_info %}
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Your Match</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center mb-3">
+                            <h3 class="match-percentage 
+                                {% if match_info.match_percentage >= 80 %}text-success
+                                {% elif match_info.match_percentage >= 50 %}text-warning
+                                {% else %}text-danger{% endif %}">
+                                {{ match_info.match_percentage }}%
+                            </h3>
+                            <p class="text-muted">Match Score</p>
+                        </div>
+
+                        {% if match_info.matched_skills %}
+                        <div class="mb-3">
+                            <h6 class="text-success"><i class="fas fa-check-circle"></i> Your Matching Skills:</h6>
+                            <div class="d-flex flex-wrap">
+                                {% for skill in match_info.matched_skills %}
+                                <span class="badge bg-success me-1 mb-1">{{ skill }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if match_info.missing_skills %}
+                        <div class="mb-3">
+                            <h6 class="text-danger"><i class="fas fa-times-circle"></i> Missing Skills:</h6>
+                            <div class="d-flex flex-wrap">
+                                {% for skill in match_info.missing_skills %}
+                                <span class="badge bg-danger me-1 mb-1">{{ skill }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if match_info.matched_courses %}
+                        <div class="mb-3">
+                            <h6 class="text-success"><i class="fas fa-check-circle"></i> Your Matching Courses:</h6>
+                            <div class="d-flex flex-wrap">
+                                {% for course in match_info.matched_courses %}
+                                <span class="badge bg-success me-1 mb-1">{{ course }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if match_info.missing_courses %}
+                        <div class="mb-3">
+                            <h6 class="text-danger"><i class="fas fa-times-circle"></i> Missing Courses:</h6>
+                            <div class="d-flex flex-wrap">
+                                {% for course in match_info.missing_courses %}
+                                <span class="badge bg-danger me-1 mb-1">{{ course }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Apply Button -->
+                        <div class="d-grid">
+                            {% if match_info.has_applied %}
+                                <button class="btn btn-secondary" disabled>
+                                    <i class="fas fa-check"></i> Already Applied
+                                </button>
+                            {% else %}
+                                <form method="POST" action="{{ url_for('apply_position', position_id=position.id) }}">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-paper-plane"></i> Apply for Position
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Company Information -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Company Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6><strong>{{ company.name }}</strong></h6>
+                        {% if company.description %}
+                            <p class="text-muted">{{ company.description }}</p>
+                        {% endif %}
+                        {% if company.min_cgpa %}
+                            <p><strong>Company Min CGPA:</strong> {{ company.min_cgpa }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.match-percentage {
+    font-weight: bold;
+    font-size: 2.5rem;
+}
+
+.badge {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+}
+
+.card-header h4, .card-header h5 {
+    color: #495057;
+}
+
+.text-success {
+    color: #28a745 !important;
+}
+
+.text-warning {
+    color: #ffc107 !important;
+}
+
+.text-danger {
+    color: #dc3545 !important;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="mb-1">{{ analysis.company.name }} - Candidate Analysis</h4>
+                    <p class="text-muted mb-0">Detailed analysis of all candidates for this company</p>
+                </div>
+                <div class="candidate-stats">
+                    <span class="badge bg-primary">{{ analysis.total_candidates }} Candidates</span>
+                    <span class="badge bg-success">{{ analysis.eligible_candidates }} Eligible</span>
+                    <span class="badge bg-info">{{ analysis.average_match }}% Avg Match</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Company Requirements -->
+                <div class="company-requirements mb-4">
+                    <h6 class="mb-3">Company Requirements</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="requirement-item">
+                                <strong>Required Skills:</strong>
+                                <div class="skill-tags mt-1">
+                                    {% for skill in json.loads(analysis.company.required_skills) %}
+                                        <span class="skill-tag">{{ skill }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="requirement-item">
+                                <strong>Required Courses:</strong>
+                                <div class="skill-tags mt-1">
+                                    {% for course in json.loads(analysis.company.required_courses) %}
+                                        <span class="skill-tag" style="background: var(--gradient-accent);">{{ course }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Candidates Analysis -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-1">Candidate Analysis</h5>
+                <p class="text-muted small mb-0">Ranked by match percentage</p>
+            </div>
+            <div class="card-body">
+                {% for candidate in analysis.candidates %}
+                <div class="candidate-analysis-card mb-3">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <div class="candidate-info">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h6 class="mb-1">{{ candidate.student.name }}</h6>
+                                        <p class="text-muted small mb-0">{{ candidate.student.college }} • CGPA: {{ candidate.student.cgpa }}</p>
+                                    </div>
+                                    <div class="candidate-score">
+                                        <div class="score-circle 
+                                            {% if candidate.match_percentage >= 80 %}high-match
+                                            {% elif candidate.match_percentage >= 50 %}medium-match
+                                            {% else %}low-match{% endif %}">
+                                            <span class="score-text">{{ candidate.match_percentage }}%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Match Breakdown -->
+                                <div class="match-breakdown">
+                                    <div class="row g-2">
+                                        <div class="col-6">
+                                            <div class="breakdown-item">
+                                                <small class="text-muted d-block">Skills Match</small>
+                                                <div class="progress" style="height: 6px;">
+                                                    <div class="progress-bar bg-success" style="width: {{ candidate.skills_percentage }}%"></div>
+                                                </div>
+                                                <small class="text-success">{{ candidate.skills_percentage }}% ({{ candidate.matched_skills|length }}/{{ candidate.total_required_skills }})</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="breakdown-item">
+                                                <small class="text-muted d-block">Courses Match</small>
+                                                <div class="progress" style="height: 6px;">
+                                                    <div class="progress-bar bg-info" style="width: {{ candidate.courses_percentage }}%"></div>
+                                                </div>
+                                                <small class="text-info">{{ candidate.courses_percentage }}% ({{ candidate.matched_courses|length }}/{{ candidate.total_required_courses }})</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Matched Skills -->
+                                {% if candidate.matched_skills %}
+                                <div class="matched-skills mt-2">
+                                    <small class="text-success d-block mb-1">Matched Skills:</small>
+                                    <div class="skill-tags">
+                                        {% for skill in candidate.matched_skills %}
+                                            <span class="skill-tag">{{ skill }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                                
+                                <!-- Missing Skills -->
+                                {% if candidate.missing_skills %}
+                                <div class="missing-skills mt-2">
+                                    <small class="text-warning d-block mb-1">Missing Skills:</small>
+                                    <div class="skill-tags">
+                                        {% for skill in candidate.missing_skills[:5] %}
+                                            <span class="skill-tag skill-tag-missing">{{ skill }}</span>
+                                        {% endfor %}
+                                        {% if candidate.missing_skills|length > 5 %}
+                                            <span class="skill-tag skill-tag-missing">+{{ candidate.missing_skills|length - 5 }} more</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="candidate-actions">
+                                <div class="eligibility-status mb-3">
+                                    {% if candidate.is_eligible %}
+                                        <span class="badge bg-success w-100 py-2">
+                                            <i class="fas fa-check-circle me-2"></i>Perfect Match
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-warning w-100 py-2">
+                                            <i class="fas fa-exclamation-circle me-2"></i>Needs Improvement
+                                        </span>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="action-buttons">
+                                    <a href="{{ url_for('view_resume', student_id=candidate.student.id) }}" 
+                                       class="btn btn-primary btn-sm w-100 mb-2" target="_blank">
+                                        <i class="fas fa-file-alt me-1"></i>View Resume
+                                    </a>
+                                    <a href="{{ url_for('student_resume_view', student_id=candidate.student.id) }}" 
+                                       class="btn btn-outline-primary btn-sm w-100">
+                                        <i class="fas fa-eye me-1"></i>View Profile
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
