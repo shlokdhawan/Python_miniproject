@@ -1,0 +1,190 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero-section text-center">
+    <div class="container">
+        <div class="row align-items-center min-vh-75">
+            <div class="col-lg-8 mx-auto">
+                <div class="hero-content">
+                    <h1 class="display-3 fw-bold mb-4">
+                        <span class="gradient-text">Student Placement</span>
+                        <br>Advisor
+                    </h1>
+                    <p class="lead fs-4 mb-5 text-muted">
+                        Connecting talented students with the right companies through intelligent matching
+                    </p>
+                    {% if not current_user.is_authenticated %}
+                        <div class="hero-buttons">
+                            <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg me-3 px-4 py-3">
+                                <i class="fas fa-rocket me-2"></i>Get Started
+                            </a>
+                            <a href="{{ url_for('login') }}" class="btn btn-outline-primary btn-lg px-4 py-3">
+                                <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="hero-buttons">
+                            {% if current_user.user_type == 'student' %}
+                                <a href="{{ url_for('student_dashboard') }}" class="btn btn-primary btn-lg me-3 px-4 py-3">
+                                    <i class="fas fa-tachometer-alt me-2"></i>Student Dashboard
+                                </a>
+                            {% else %}
+                                <a href="{{ url_for('company_dashboard') }}" class="btn btn-primary btn-lg me-3 px-4 py-3">
+                                    <i class="fas fa-building me-2"></i>Company Dashboard
+                                </a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Floating elements for visual appeal -->
+        <div class="floating-elements">
+            <div class="floating-icon float-animation" style="top: 20%; left: 10%; animation-delay: 0s;">
+                <i class="fas fa-graduation-cap fa-2x text-primary"></i>
+            </div>
+            <div class="floating-icon float-animation" style="top: 30%; right: 15%; animation-delay: 1s;">
+                <i class="fas fa-briefcase fa-2x text-success"></i>
+            </div>
+            <div class="floating-icon float-animation" style="bottom: 20%; left: 20%; animation-delay: 2s;">
+                <i class="fas fa-chart-line fa-2x text-warning"></i>
+            </div>
+            <div class="floating-icon float-animation" style="bottom: 30%; right: 10%; animation-delay: 1.5s;">
+                <i class="fas fa-users fa-2x text-info"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Features Section -->
+    <div class="row text-center mb-5">
+        <div class="col-12 mb-5">
+            <h2 class="display-5 fw-bold mb-3">Why Choose Our Platform?</h2>
+            <p class="lead text-muted">Revolutionary placement matching powered by AI</p>
+        </div>
+        
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card feature-card h-100">
+                <div class="card-body p-4">
+                    <div class="feature-icon mb-4">
+                        <div class="icon-wrapper">
+                            <i class="fas fa-graduation-cap fa-3x text-primary"></i>
+                        </div>
+                    </div>
+                    <h4 class="fw-bold mb-3">For Students</h4>
+                    <p class="text-muted mb-4">Create your profile, get matched with companies, and discover skills you need to improve.</p>
+                    <ul class="list-unstyled text-start">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Smart profile matching</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Skill gap analysis</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Course recommendations</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card feature-card h-100">
+                <div class="card-body p-4">
+                    <div class="feature-icon mb-4">
+                        <div class="icon-wrapper">
+                            <i class="fas fa-building fa-3x text-success"></i>
+                        </div>
+                    </div>
+                    <h4 class="fw-bold mb-3">For Companies</h4>
+                    <p class="text-muted mb-4">Find qualified candidates that match your requirements and recruitment criteria.</p>
+                    <ul class="list-unstyled text-start">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Advanced candidate filtering</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Match percentage scoring</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Export capabilities</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card feature-card h-100">
+                <div class="card-body p-4">
+                    <div class="feature-icon mb-4">
+                        <div class="icon-wrapper">
+                            <i class="fas fa-chart-line fa-3x text-warning"></i>
+                        </div>
+                    </div>
+                    <h4 class="fw-bold mb-3">Smart Matching</h4>
+                    <p class="text-muted mb-4">Our algorithm matches students and companies based on skills, courses, and requirements.</p>
+                    <ul class="list-unstyled text-start">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>AI-powered matching</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Real-time analytics</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Performance insights</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- How It Works Section -->
+    <div class="row justify-content-center mt-5 mb-5">
+        <div class="col-lg-10">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold mb-3">How It Works</h2>
+                <p class="lead text-muted">Simple steps to find your perfect match</p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="text-center">
+                        <div class="step-number mb-4">
+                            <div class="step-circle">
+                                <span class="step-text">1</span>
+                            </div>
+                        </div>
+                        <h4 class="fw-bold mb-3">Create Profile</h4>
+                        <p class="text-muted">Students and companies create detailed profiles with their requirements and qualifications.</p>
+                        <div class="step-features mt-3">
+                            <small class="d-block text-muted"><i class="fas fa-user me-2"></i>Personal Information</small>
+                            <small class="d-block text-muted"><i class="fas fa-cogs me-2"></i>Skills & Experience</small>
+                            <small class="d-block text-muted"><i class="fas fa-graduation-cap me-2"></i>Education Details</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="text-center">
+                        <div class="step-number mb-4">
+                            <div class="step-circle">
+                                <span class="step-text">2</span>
+                            </div>
+                        </div>
+                        <h4 class="fw-bold mb-3">Get Matched</h4>
+                        <p class="text-muted">Our AI system analyzes profiles and finds the best matches based on multiple criteria.</p>
+                        <div class="step-features mt-3">
+                            <small class="d-block text-muted"><i class="fas fa-brain me-2"></i>AI Analysis</small>
+                            <small class="d-block text-muted"><i class="fas fa-percentage me-2"></i>Match Scoring</small>
+                            <small class="d-block text-muted"><i class="fas fa-chart-bar me-2"></i>Compatibility Check</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="text-center">
+                        <div class="step-number mb-4">
+                            <div class="step-circle">
+                                <span class="step-text">3</span>
+                            </div>
+                        </div>
+                        <h4 class="fw-bold mb-3">Connect & Succeed</h4>
+                        <p class="text-muted">Companies can view matched students and connect with potential candidates.</p>
+                        <div class="step-features mt-3">
+                            <small class="d-block text-muted"><i class="fas fa-handshake me-2"></i>Direct Connection</small>
+                            <small class="d-block text-muted"><i class="fas fa-file-alt me-2"></i>Resume Access</small>
+                            <small class="d-block text-muted"><i class="fas fa-star me-2"></i>Success Stories</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
